@@ -7,7 +7,7 @@ main :: proc() {
     window_size :: [2]i32 { 1024, 576 }
 
     rl.InitWindow(window_size.x, window_size.y, "Gearworks")
-    gear := rl.LoadTexture("gear.png")
+    gear := rl.LoadTexture("../assets/gear.png")
     gear_pos : [2]f32
 
     size :: 4
