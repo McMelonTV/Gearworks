@@ -7,6 +7,7 @@
     <option name="debuggerId" value="lldb-bundled" />
     <option name="highlightUnknownReferencesEnabled" value="false" />
     <option name="conditionalSymbolResolutionEnabled" value="false" />
-    <option name="cacheEnabled" value="false" />
+    <option name="cacheEnabled" value="true" />
+    <option name="useBuiltinFormatter" value="false" />
   </component>
 </project>
