@@ -42,9 +42,16 @@ tasks.withType(JavaCompile).configureEach {
     it.options.release = 25
 }
 
-tasks.register('buildAndCopy', Copy) {
+tasks.register('buildAndCopyClient', Copy) {
     group 'build'
     dependsOn 'jar'
     from "build/libs/"
-    into "../run/mods"
+    into "../runClient/mods"
+}
+
+tasks.register('buildAndCopyServer', Copy) {
+    group 'build'
+    dependsOn 'jar'
+    from "build/libs/"
+    into "../runServer/mods"
 }

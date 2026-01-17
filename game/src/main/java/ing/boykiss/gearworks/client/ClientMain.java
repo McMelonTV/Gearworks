@@ -14,7 +14,7 @@ import java.nio.IntBuffer;
 
 public class ClientMain {
     private static long window;
-    
+
     static void main(String[] args) {
         System.out.println(Greeting.getGreeting());
 
