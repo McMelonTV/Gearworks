@@ -18,11 +18,9 @@ public class ClientMain {
         init();
         loop();
 
-        // Free the window callbacks and destroy the window
         Callbacks.glfwFreeCallbacks(window);
         GLFW.glfwDestroyWindow(window);
 
-        // Terminate GLFW and free the error callback
         GLFW.glfwTerminate();
         GLFW.glfwSetErrorCallback(null).free();
     }
@@ -33,18 +31,13 @@ public class ClientMain {
         if (!GLFW.glfwInit())
             throw new IllegalStateException("Unable to initialize GLFW");
 
-        GLFW.glfwDefaultWindowHints(); // optional, the current window hints are already the default
-//        GLFW.glfwWindowHint(GLFW.GLFW_VISIBLE, GLFW.GLFW_FALSE); // the window will stay hidden after creation
-        GLFW.glfwWindowHint(GLFW.GLFW_RESIZABLE, GLFW.GLFW_TRUE); // the window will be resizable
-        GLFW.glfwWindowHint(GLFW.GLFW_CONTEXT_CREATION_API, GLFW.GLFW_NATIVE_CONTEXT_API); // needed for wayland
-
         window = GLFW.glfwCreateWindow(1024, 576, "Gearworks", MemoryUtil.NULL, MemoryUtil.NULL);
         if (window == MemoryUtil.NULL)
             throw new RuntimeException("Failed to create the GLFW window");
 
         GLFW.glfwSetKeyCallback(window, (window, key, scancode, action, mods) -> {
             if (key == GLFW.GLFW_KEY_ESCAPE && action == GLFW.GLFW_RELEASE)
-                GLFW.glfwSetWindowShouldClose(window, true); // We will detect this in the rendering loop
+                GLFW.glfwSetWindowShouldClose(window, true);
         });
 
         // Get the thread stack and push a new frame
@@ -85,9 +78,9 @@ public class ClientMain {
         GL46.glClearColor(1.0f, 0.0f, 0.0f, 0.0f);
 
         while (!GLFW.glfwWindowShouldClose(window)) {
-            GL46.glClear(GL46.GL_COLOR_BUFFER_BIT | GL46.GL_DEPTH_BUFFER_BIT); // clear the framebuffer
+            GL46.glClear(GL46.GL_COLOR_BUFFER_BIT | GL46.GL_DEPTH_BUFFER_BIT);
 
-            GLFW.glfwSwapBuffers(window); // swap the color buffers
+            GLFW.glfwSwapBuffers(window);
 
             GLFW.glfwPollEvents();
         }
