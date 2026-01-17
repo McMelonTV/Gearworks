@@ -1,0 +1,53 @@
+plugins {
+    id 'java'
+}
+
+version = "1.0"
+group = "ing.boykiss"
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_25
+    targetCompatibility = JavaVersion.VERSION_25
+}
+
+repositories {
+    mavenCentral()
+    maven {
+        url "https://repo.spongepowered.org/maven/"
+    }
+    maven {
+        url "https://maven.fabricmc.net/"
+    }
+}
+
+dependencies {
+    compileOnly "org.spongepowered:mixin:0.8.5"
+    compileOnly "net.fabricmc:fabric-loader:0.18.4"
+    compileOnly project(':game')
+    compileOnly project(':modloader')
+}
+
+processResources {
+    inputs.property "version", project.version
+    filteringCharset "UTF-8"
+
+    filesMatching("fabric.mod.json") {
+        expand "version": project.version
+    }
+}
+
+jar {
+    archiveBaseName = "examplemod"
+}
+
+tasks.withType(JavaCompile).configureEach {
+    it.options.encoding = "UTF-8"
+    it.options.release = 25
+}
+
+tasks.register('buildAndCopy', Copy) {
+    group 'build'
+    dependsOn 'assemble'
+    from "build/libs/"
+    into "../run/mods"
+}

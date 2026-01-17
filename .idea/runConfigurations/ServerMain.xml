@@ -1,7 +1,7 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="ServerMain" type="Application" factoryName="Application">
     <option name="MAIN_CLASS_NAME" value="ing.boykiss.gearworks.server.ServerMain" />
-    <module name="gearworks.main" />
+    <module name="Gearworks.game.main" />
     <method v="2">
       <option name="Make" enabled="true" />
     </method>

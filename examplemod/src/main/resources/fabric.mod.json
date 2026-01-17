@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "id": "examplemod",
+  "version": "${version}",
+  "name": "Example Mod",
+  "description": "An example mod for Gearworks",
+  "authors": [
+    "Mel"
+  ],
+  "contact": {
+    "homepage": "https://example.com"
+  },
+  "license": "MIT",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "ing.boykiss.examplemod.ExampleMod"
+    ]
+  },
+  "mixins": [
+    "examplemod.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.18.4",
+    "gearworks": "0.0.*"
+  }
+}

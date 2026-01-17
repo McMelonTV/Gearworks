@@ -1,5 +1,6 @@
 package ing.boykiss.gearworks.client;
 
+import ing.boykiss.gearworks.common.Greeting;
 import org.lwjgl.glfw.Callbacks;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallback;
@@ -15,6 +16,8 @@ public class ClientMain {
     private long window;
 
     void main() {
+        System.out.println(Greeting.getGreeting());
+
         init();
         loop();
 

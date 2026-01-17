@@ -2,8 +2,13 @@ plugins {
     id 'java'
 }
 
-group = 'ing.boykiss'
+group = 'ing.boykiss.gearworks'
 version = '0.0.1-dev'
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_25
+    targetCompatibility = JavaVersion.VERSION_25
+}
 
 import org.gradle.internal.os.OperatingSystem
 
@@ -65,7 +70,7 @@ dependencies {
     implementation "org.joml:joml-primitives:1.10.0"
 }
 
-tasks.register('clientJar', Jar) {
+jar {
     manifest {
         attributes 'Main-Class': 'ing.boykiss.gearworks.client.ClientMain'
     }
@@ -91,4 +96,11 @@ tasks.register('serverJar', Jar) {
     from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
 
     exclude 'META-INF/*.SF', 'META-INF/*.DSA', 'META-INF/*.RSA', 'META-INF/*.MF'
+}
+
+tasks.register('buildAndCopy', Copy) {
+    group 'build'
+    dependsOn 'assemble'
+    from "build/libs/"
+    into "../run/"
 }
