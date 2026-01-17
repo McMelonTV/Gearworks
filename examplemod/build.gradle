@@ -21,9 +21,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly "org.spongepowered:mixin:0.8.5"
-    compileOnly "net.fabricmc:fabric-loader:0.18.4"
-    compileOnly project(':game')
+    implementation project(':game')
 }
 
 processResources {
