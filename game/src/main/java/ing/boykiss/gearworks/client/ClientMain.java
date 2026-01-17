@@ -13,9 +13,9 @@ import org.lwjgl.system.MemoryUtil;
 import java.nio.IntBuffer;
 
 public class ClientMain {
-    private long window;
-
-    void main() {
+    private static long window;
+    
+    static void main(String[] args) {
         System.out.println(Greeting.getGreeting());
 
         init();
@@ -28,7 +28,7 @@ public class ClientMain {
         GLFW.glfwSetErrorCallback(null).free();
     }
 
-    private void init() {
+    private static void init() {
         GLFWErrorCallback.createPrint(System.err).set();
 
         if (!GLFW.glfwInit())
@@ -75,7 +75,7 @@ public class ClientMain {
         GLFW.glfwShowWindow(window);
     }
 
-    private void loop() {
+    private static void loop() {
         GL.createCapabilities();
 
         GL46.glClearColor(1.0f, 0.0f, 0.0f, 0.0f);

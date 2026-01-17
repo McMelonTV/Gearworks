@@ -1,2 +1,2 @@
 rootProject.name = 'Gearworks'
-include 'game', 'modloader', 'examplemod'
+include 'game', 'examplemod'

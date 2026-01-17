@@ -1,4 +1,4 @@
-package ing.boykiss.gearworks.modloader;
+package ing.boykiss.gearworks;
 
 import net.fabricmc.loader.impl.FormattedException;
 import net.fabricmc.loader.impl.game.GameProvider;
@@ -147,6 +147,7 @@ public class AppGameProvider implements GameProvider {
         }
         // List out default locations.
         appLocations.add("./Gearworks-" + getNormalizedGameVersion() + ".jar");
+        appLocations.add("./GearworksServer-" + getNormalizedGameVersion() + ".jar");
 
         // Filter the list of possible locations based on whether the file exists.
         List<Path> existingAppLocations = appLocations.stream().map(p -> Paths.get(p).toAbsolutePath().normalize())
@@ -171,8 +172,7 @@ public class AppGameProvider implements GameProvider {
     }
 
     /*
-     * Add additional configuration to the FabricLauncher, but do not launch your
-     * app.
+     * Add additional configuration to the FabricLauncher, but do not launch your app.
      */
     @Override
     public void initialize(FabricLauncher launcher) {
@@ -203,7 +203,8 @@ public class AppGameProvider implements GameProvider {
     public void launch(ClassLoader loader) {
         try {
             Class<?> main = loader.loadClass(this.getEntrypoint());
-            Method method = main.getMethod("main", String[].class);
+            Method method = main.getDeclaredMethod("main", String[].class);
+            method.setAccessible(true);
 
             method.invoke(null, (Object) this.arguments.toArray());
         } catch (InvocationTargetException e) {

@@ -40,9 +40,17 @@ switch (OperatingSystem.current()) {
 
 repositories {
     mavenCentral()
+
+    maven {
+        url "https://repo.spongepowered.org/maven/"
+    }
+    maven {
+        url "https://maven.fabricmc.net/"
+    }
 }
 
 dependencies {
+    // LWJGL Dependencies
     implementation platform("org.lwjgl:lwjgl-bom:3.3.6")
 
     implementation "org.lwjgl:lwjgl"
@@ -68,11 +76,27 @@ dependencies {
     implementation "org.lwjgl:lwjgl-zstd::$lwjglNatives"
     implementation "org.joml:joml:1.10.8"
     implementation "org.joml:joml-primitives:1.10.0"
+
+    // Fabric dependencies
+    implementation "net.fabricmc:fabric-loader:0.18.4"
+    implementation "net.fabricmc:tiny-mappings-parser:0.2.2.14"
+    implementation "net.fabricmc:access-widener:2.1.0"
+
+    implementation "com.google.guava:guava:33.5.0-jre"
+    implementation "com.google.code.gson:gson:2.13.2"
+
+    // Mixin dependencies
+    implementation "org.ow2.asm:asm:9.9.1"
+    implementation "org.ow2.asm:asm-analysis:9.9.1"
+    implementation "org.ow2.asm:asm-commons:9.9.1"
+    implementation "org.ow2.asm:asm-tree:9.9.1"
+    implementation "org.ow2.asm:asm-util:9.9.1"
+    implementation "org.spongepowered:mixin:0.8.5"
 }
 
 jar {
     manifest {
-        attributes 'Main-Class': 'ing.boykiss.gearworks.client.ClientMain'
+        attributes 'Main-Class': 'net.fabricmc.loader.impl.launch.knot.KnotClient'
     }
     archiveBaseName = 'Gearworks'
 
@@ -86,7 +110,7 @@ jar {
 
 tasks.register('serverJar', Jar) {
     manifest {
-        attributes 'Main-Class': 'ing.boykiss.gearworks.server.ServerMain'
+        attributes 'Main-Class': 'net.fabricmc.loader.impl.launch.knot.KnotServer'
     }
     archiveBaseName = 'GearworksServer'
 

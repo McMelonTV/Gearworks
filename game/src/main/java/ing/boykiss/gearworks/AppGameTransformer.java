@@ -1,4 +1,4 @@
-package ing.boykiss.gearworks.modloader;
+package ing.boykiss.gearworks;
 
 import net.fabricmc.loader.impl.game.patch.GameTransformer;
 
