@@ -46,7 +46,7 @@ tasks.withType(JavaCompile).configureEach {
 
 tasks.register('buildAndCopy', Copy) {
     group 'build'
-    dependsOn 'assemble'
+    dependsOn 'jar'
     from "build/libs/"
     into "../run/mods"
 }

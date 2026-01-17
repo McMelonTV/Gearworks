@@ -1,0 +1,10 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="ModdedServer" type="JarApplication">
+    <option name="JAR_PATH" value="$PROJECT_DIR$/run/GearworksServer-0.0.1-dev.jar" />
+    <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/run" />
+    <option name="ALTERNATIVE_JRE_PATH" />
+    <method v="2">
+      <option name="Gradle.BeforeRunTask" enabled="true" tasks="buildAndCopy" externalProjectPath="$PROJECT_DIR$" vmOptions="" scriptParameters="" />
+    </method>
+  </configuration>
+</component>

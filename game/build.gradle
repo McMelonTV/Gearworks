@@ -124,7 +124,7 @@ tasks.register('serverJar', Jar) {
 
 tasks.register('buildAndCopy', Copy) {
     group 'build'
-    dependsOn 'assemble'
+    dependsOn 'jar', 'serverJar'
     from "build/libs/"
     into "../run/"
 }

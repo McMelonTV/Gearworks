@@ -1,5 +1,6 @@
 package ing.boykiss.gearworks;
 
+import net.fabricmc.api.EnvType;
 import net.fabricmc.loader.impl.FormattedException;
 import net.fabricmc.loader.impl.game.GameProvider;
 import net.fabricmc.loader.impl.game.GameProviderHelper;
@@ -34,6 +35,7 @@ public class AppGameProvider implements GameProvider {
 
     private static final GameTransformer TRANSFORMER = new AppGameTransformer();
 
+    private EnvType environment;
     private Arguments arguments;
     private Path appJar;
 
@@ -98,7 +100,7 @@ public class AppGameProvider implements GameProvider {
      */
     @Override
     public String getEntrypoint() {
-        return CLIENT_ENTRYPOINT;
+        return environment == EnvType.CLIENT ? CLIENT_ENTRYPOINT : SERVER_ENTRYPOINT;
     }
 
     /*
@@ -136,6 +138,8 @@ public class AppGameProvider implements GameProvider {
      */
     @Override
     public boolean locateGame(FabricLauncher launcher, String[] args) {
+        this.environment = launcher.getEnvironmentType();
+
         this.arguments = new Arguments();
         this.arguments.parse(args);
 
@@ -145,9 +149,12 @@ public class AppGameProvider implements GameProvider {
         if (System.getProperty(SystemProperties.GAME_JAR_PATH) != null) {
             appLocations.add(System.getProperty(SystemProperties.GAME_JAR_PATH));
         }
-        // List out default locations.
-        appLocations.add("./Gearworks-" + getNormalizedGameVersion() + ".jar");
-        appLocations.add("./GearworksServer-" + getNormalizedGameVersion() + ".jar");
+
+        if (launcher.getEnvironmentType() == EnvType.CLIENT) {
+            appLocations.add("./Gearworks-" + getNormalizedGameVersion() + ".jar");
+        } else if (launcher.getEnvironmentType() == EnvType.SERVER) {
+            appLocations.add("./GearworksServer-" + getNormalizedGameVersion() + ".jar");
+        }
 
         // Filter the list of possible locations based on whether the file exists.
         List<Path> existingAppLocations = appLocations.stream().map(p -> Paths.get(p).toAbsolutePath().normalize())
