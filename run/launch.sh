@@ -1,1 +1,1 @@
-java -Dfabric.skipMcProvider=true -classpath "Gearworks-0.0.1-dev.jar;GearworksModLoader-0.0.1-dev.jar;deps/*" net.fabricmc.loader.launch.knot.KnotClient
+java -Dfabric.skipMcProvider=true -classpath "Gearworks-0.0.1-dev.jar;GearworksModLoader-0.0.1-dev.jar;deps/*" net.fabricmc.loader.impl.launch.knot.KnotClient
