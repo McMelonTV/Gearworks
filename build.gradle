@@ -64,3 +64,31 @@ dependencies {
     implementation "org.joml:joml:1.10.8"
     implementation "org.joml:joml-primitives:1.10.0"
 }
+
+tasks.register('clientJar', Jar) {
+    manifest {
+        attributes 'Main-Class': 'ing.boykiss.gearworks.client.ClientMain'
+    }
+    archiveBaseName = 'Gearworks'
+
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
+    from sourceSets.main.output
+    from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
+
+    exclude 'META-INF/*.SF', 'META-INF/*.DSA', 'META-INF/*.RSA', 'META-INF/*.MF'
+}
+
+tasks.register('serverJar', Jar) {
+    manifest {
+        attributes 'Main-Class': 'ing.boykiss.gearworks.server.ServerMain'
+    }
+    archiveBaseName = 'GearworksServer'
+
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
+    from sourceSets.main.output
+    from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
+
+    exclude 'META-INF/*.SF', 'META-INF/*.DSA', 'META-INF/*.RSA', 'META-INF/*.MF'
+}
