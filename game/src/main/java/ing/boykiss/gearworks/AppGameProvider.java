@@ -210,6 +210,7 @@ public class AppGameProvider implements GameProvider {
     public void launch(ClassLoader loader) {
         try {
             Class<?> main = loader.loadClass(this.getEntrypoint());
+
             Method method = main.getDeclaredMethod("main", String[].class);
             method.setAccessible(true);
 
