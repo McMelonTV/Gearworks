@@ -5,9 +5,7 @@
   "mixins": [
     "MixinGreeting"
   ],
-  "client": [
-    "client.MixinClientMain"
-  ],
+  "client": [],
   "server": [],
   "injectors": {
     "defaultRequire": 1
