@@ -5,11 +5,11 @@ import java.io.InputStream;
 import java.nio.ByteBuffer;
 
 public class ResourceLoader {
-    public static ByteBuffer loadFileAsByteBuffer(String file) {
-        InputStream stream = ClassLoader.getSystemResourceAsStream(file);
+    public static ByteBuffer readFileBytes(String filePath) {
+        InputStream stream = ClassLoader.getSystemResourceAsStream(filePath);
 
         if (stream == null) {
-            System.err.println("File not found in resources: " + file);
+            System.err.println("File not found in resources: " + filePath);
             return null;
         }
 

@@ -19,7 +19,7 @@ public class Font {
         ByteBuffer bitmap = BufferUtils.createByteBuffer(512 * 512);
         fontCharData = STBTTBakedChar.malloc(96);
 
-        ByteBuffer ttf = ResourceLoader.loadFileAsByteBuffer(fontFile);
+        ByteBuffer ttf = ResourceLoader.readFileBytes(fontFile);
         if (ttf == null) throw new RuntimeException("Failed to load font file");
         STBTruetype.stbtt_BakeFontBitmap(ttf, 24, bitmap, 512, 512, 32, fontCharData);
 
