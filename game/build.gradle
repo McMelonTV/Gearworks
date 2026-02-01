@@ -50,6 +50,15 @@ repositories {
 }
 
 dependencies {
+    // Misc Dependencies
+    compileOnly "org.projectlombok:lombok:1.18.42"
+    annotationProcessor "org.projectlombok:lombok:1.18.42"
+
+    // Logging Dependencies
+    implementation "org.slf4j:slf4j-api:2.0.17"
+    implementation "ch.qos.logback:logback-core:1.5.27"
+    implementation "ch.qos.logback:logback-classic:1.5.26"
+
     // LWJGL Dependencies
     implementation platform("org.lwjgl:lwjgl-bom:3.3.6")
 
