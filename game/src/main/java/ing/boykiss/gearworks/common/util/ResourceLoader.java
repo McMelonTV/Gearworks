@@ -26,4 +26,22 @@ public class ResourceLoader {
             return null;
         }
     }
+
+    public static String readFileString(String filePath) {
+        InputStream stream = ClassLoader.getSystemResourceAsStream(filePath);
+
+        if (stream == null) {
+            System.err.println("File not found in resources: " + filePath);
+            return null;
+        }
+
+        try {
+            byte[] data = stream.readAllBytes();
+
+            return new String(data);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 }
