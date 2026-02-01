@@ -54,6 +54,8 @@ dependencies {
     compileOnly "org.projectlombok:lombok:1.18.42"
     annotationProcessor "org.projectlombok:lombok:1.18.42"
 
+    implementation 'com.google.code.gson:gson:2.13.2'
+
     // Logging Dependencies
     implementation "org.slf4j:slf4j-api:2.0.17"
     implementation "ch.qos.logback:logback-core:1.5.27"
