@@ -4,6 +4,9 @@
     <option name="VM_PARAMETERS" value="--enable-native-access=ALL-UNNAMED" />
     <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/runClient" />
     <option name="ALTERNATIVE_JRE_PATH" />
+    <envs>
+      <env name="__GL_THREADED_OPTIMIZATIONS" value="0" />
+    </envs>
     <method v="2">
       <option name="Gradle.BeforeRunTask" enabled="false" tasks="buildAndCopyClient" externalProjectPath="$PROJECT_DIR$" vmOptions="" scriptParameters="" />
     </method>
