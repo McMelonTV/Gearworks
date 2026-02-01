@@ -3,7 +3,6 @@ package ing.boykiss.gearworks.client.render.game;
 import ing.boykiss.gearworks.client.render.Window;
 import lombok.Getter;
 import org.lwjgl.glfw.GLFW;
-import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL46;
 import org.lwjgl.system.MemoryUtil;
 
@@ -38,12 +37,14 @@ public class GameRenderer {
                 this::processKeys
         );
 
-        GL.createCapabilities();
-
         GL46.glClearColor(1.0f, 0.0f, 0.0f, 0.0f);
 
         while (!window.shouldClose()) {
+            window.pollEvents();
+
             renderFrame();
+
+            window.update();
         }
 
         window.cleanup();
@@ -62,9 +63,5 @@ public class GameRenderer {
 
     private void renderFrame() {
         GL46.glClear(GL46.GL_COLOR_BUFFER_BIT | GL46.GL_DEPTH_BUFFER_BIT);
-
-        window.update();
-
-        window.pollEvents();
     }
 }
