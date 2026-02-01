@@ -15,7 +15,8 @@ public class GameRenderer {
     private boolean isStarted = false;
 
     public GameRenderer() {
-        renderThread = Thread.ofVirtual().unstarted(this::initThread);
+        // OpenGL requires a platform thread
+        renderThread = Thread.ofPlatform().unstarted(this::initThread);
     }
 
     public void start() {
