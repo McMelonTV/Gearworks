@@ -38,6 +38,7 @@ public class Window {
         GLFW.glfwDefaultWindowHints();
         GLFW.glfwWindowHint(GLFW.GLFW_CONTEXT_VERSION_MAJOR, props.contextVersionMajor);
         GLFW.glfwWindowHint(GLFW.GLFW_CONTEXT_VERSION_MINOR, props.contextVersionMinor);
+        GLFW.glfwWindowHint(GLFW.GLFW_OPENGL_PROFILE, GLFW.GLFW_OPENGL_COMPAT_PROFILE); // TODO: temporary line, remove when stuff is fixed
 
         windowHandle = GLFW.glfwCreateWindow(props.width, props.height, props.title, props.monitor, props.share);
         if (windowHandle == MemoryUtil.NULL) {
