@@ -30,7 +30,6 @@ public class Window {
     private int height;
 
     private boolean vsync = true;
-    private int targetFPS = 120; // TODO: implement
 
     public Window(Properties props, GLFWFramebufferSizeCallbackI framebufferSizeCallback, GLFWKeyCallbackI keyCallback) {
         if (!GLFW.glfwInit()) {

@@ -1,18 +1,22 @@
 package ing.boykiss.gearworks.client.render.game;
 
 import ing.boykiss.gearworks.client.render.Window;
+import ing.boykiss.gearworks.client.render.font.Font;
 import lombok.Getter;
 import org.lwjgl.glfw.GLFW;
-import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL46;
 import org.lwjgl.system.MemoryUtil;
 
 public class GameRenderer {
     private final Thread renderThread;
+
     @Getter
     private Window window;
 
     private boolean isStarted = false;
+    private int targetFPS = 0;
+
+    private Font font;
 
     public GameRenderer() {
         // OpenGL requires a platform thread
@@ -39,19 +43,38 @@ public class GameRenderer {
                 this::processKeys
         );
 
-        GL.createCapabilities();
+        this.font = new Font("font.ttf");
 
-        GL46.glEnable(GL46.GL_DEBUG_OUTPUT);
-        GL46.glEnable(GL46.GL_DEBUG_OUTPUT_SYNCHRONOUS);
+        GL46.glMatrixMode(GL46.GL_PROJECTION);
+        GL46.glLoadIdentity();
+        GL46.glOrtho(0, window.getWidth(), window.getHeight(), 0, -1, 1);  // top left origin
+        GL46.glMatrixMode(GL46.GL_MODELVIEW);
+        GL46.glLoadIdentity();
+
+        GL46.glEnable(GL46.GL_BLEND);
+        GL46.glBlendFunc(GL46.GL_SRC_ALPHA, GL46.GL_ONE_MINUS_SRC_ALPHA);
+
+        GL46.glEnable(GL46.GL_TEXTURE_2D);
 
         GL46.glClearColor(1.0f, 0.0f, 0.0f, 0.0f);
+
+        long lastFrameNanos = System.nanoTime();
+        long frameTargetNanos = 1_000_000_000 / (targetFPS > 0 ? targetFPS : Integer.MAX_VALUE);
 
         while (!window.shouldClose()) {
             window.pollEvents();
 
-            renderFrame();
+            long currentNanos = System.nanoTime();
+            long deltaNanos = currentNanos - lastFrameNanos;
 
-            window.update();
+            if (deltaNanos >= frameTargetNanos) {
+                renderFrame(deltaNanos);
+                window.update();
+
+                lastFrameNanos = currentNanos;
+            } else {
+                Thread.yield(); // TODO: should this be used?
+            }
         }
 
         window.cleanup();
@@ -65,10 +88,19 @@ public class GameRenderer {
     }
 
     private void processResize(long window, int width, int height) {
+        GL46.glViewport(0, 0, width, height);
 
+        GL46.glMatrixMode(GL46.GL_PROJECTION);
+        GL46.glLoadIdentity();
+        GL46.glOrtho(0, width, height, 0, -1, 1);
+        GL46.glMatrixMode(GL46.GL_MODELVIEW);
     }
 
-    private void renderFrame() {
+    private void renderFrame(long deltaNanos) {
         GL46.glClear(GL46.GL_COLOR_BUFFER_BIT | GL46.GL_DEPTH_BUFFER_BIT);
+
+        int fps = (int) (1_000_000_000 / deltaNanos);
+
+        font.drawText("FPS: " + fps, 50, 50);
     }
 }
