@@ -7,6 +7,8 @@ import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWFramebufferSizeCallbackI;
 import org.lwjgl.glfw.GLFWKeyCallbackI;
 import org.lwjgl.glfw.GLFWVidMode;
+import org.lwjgl.opengl.GL;
+import org.lwjgl.opengl.GL46;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.system.MemoryUtil;
 import org.slf4j.Logger;
@@ -55,6 +57,11 @@ public class Window {
         GLFW.glfwSetKeyCallback(windowHandle, keyCallback);
 
         GLFW.glfwMakeContextCurrent(windowHandle);
+
+        GL.createCapabilities();
+
+        GL46.glEnable(GL46.GL_DEBUG_OUTPUT);
+        GL46.glEnable(GL46.GL_DEBUG_OUTPUT_SYNCHRONOUS);
 
         if (vsync) {
             GLFW.glfwSwapInterval(1);
