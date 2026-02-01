@@ -3,6 +3,7 @@ package ing.boykiss.gearworks.client.render.game;
 import ing.boykiss.gearworks.client.render.Window;
 import lombok.Getter;
 import org.lwjgl.glfw.GLFW;
+import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL46;
 import org.lwjgl.system.MemoryUtil;
 
@@ -36,6 +37,11 @@ public class GameRenderer {
                 this::processResize,
                 this::processKeys
         );
+
+        GL.createCapabilities();
+
+        GL46.glEnable(GL46.GL_DEBUG_OUTPUT);
+        GL46.glEnable(GL46.GL_DEBUG_OUTPUT_SYNCHRONOUS);
 
         GL46.glClearColor(1.0f, 0.0f, 0.0f, 0.0f);
 
