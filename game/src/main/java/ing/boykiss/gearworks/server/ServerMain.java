@@ -1,23 +1,21 @@
 package ing.boykiss.gearworks.server;
 
 import ing.boykiss.gearworks.common.Greeting;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicLong;
+import ing.boykiss.gearworks.server.engine.GameEngine;
 
 public class ServerMain {
+    private static GameEngine gameEngine;
+
     static void main(String[] args) {
+        Runtime.getRuntime().addShutdownHook(Thread.ofVirtual().unstarted(() -> System.out.println(Greeting.getGoodbye())));
+
         System.out.println(Greeting.getGreeting());
+
+        gameEngine = new GameEngine();
+        gameEngine.start();
+
+        while (true) {
+            // NOOP to prevent shutting down this thread, might not be the proper way to handle this but whatever
+        }
     }
 }
