@@ -49,6 +49,13 @@ repositories {
     }
 }
 
+configurations {
+    loaderDeps {
+        canBeResolved = true
+        canBeConsumed = false
+    }
+}
+
 dependencies {
     // Misc Dependencies
     compileOnly "org.projectlombok:lombok:1.18.42"
@@ -89,26 +96,34 @@ dependencies {
     implementation "org.joml:joml-primitives:1.10.0"
 
     // Fabric dependencies
-    implementation "net.fabricmc:fabric-loader:0.18.4"
-    implementation "net.fabricmc:tiny-mappings-parser:0.2.2.14"
-    implementation "net.fabricmc:access-widener:2.1.0"
+    compileOnly "net.fabricmc:fabric-loader:0.18.4"
+    loaderDeps "net.fabricmc:fabric-loader:0.18.4"
+    compileOnly "net.fabricmc:tiny-mappings-parser:0.2.2.14"
+    loaderDeps "net.fabricmc:tiny-mappings-parser:0.2.2.14"
+    compileOnly "net.fabricmc:access-widener:2.1.0"
+    loaderDeps "net.fabricmc:access-widener:2.1.0"
 
     implementation "com.google.guava:guava:33.5.0-jre"
+    loaderDeps "com.google.guava:guava:33.5.0-jre"
     implementation "com.google.code.gson:gson:2.13.2"
+    loaderDeps "com.google.code.gson:gson:2.13.2"
 
     // Mixin dependencies
-    implementation "org.ow2.asm:asm:9.9.1"
-    implementation "org.ow2.asm:asm-analysis:9.9.1"
-    implementation "org.ow2.asm:asm-commons:9.9.1"
-    implementation "org.ow2.asm:asm-tree:9.9.1"
-    implementation "org.ow2.asm:asm-util:9.9.1"
-    implementation "org.spongepowered:mixin:0.8.5"
+    compileOnly "org.ow2.asm:asm:9.9.1"
+    loaderDeps "org.ow2.asm:asm:9.9.1"
+    compileOnly "org.ow2.asm:asm-analysis:9.9.1"
+    loaderDeps "org.ow2.asm:asm-analysis:9.9.1"
+    compileOnly "org.ow2.asm:asm-commons:9.9.1"
+    loaderDeps "org.ow2.asm:asm-commons:9.9.1"
+    compileOnly "org.ow2.asm:asm-tree:9.9.1"
+    loaderDeps "org.ow2.asm:asm-tree:9.9.1"
+    compileOnly "org.ow2.asm:asm-util:9.9.1"
+    loaderDeps "org.ow2.asm:asm-util:9.9.1"
+    compileOnly "org.spongepowered:mixin:0.8.5"
+    loaderDeps "org.spongepowered:mixin:0.8.5"
 }
 
 jar {
-    manifest {
-        attributes 'Main-Class': 'net.fabricmc.loader.impl.launch.knot.KnotClient'
-    }
     archiveBaseName = 'Gearworks'
     destinationDirectory = layout.buildDirectory.dir("client")
 
@@ -118,12 +133,43 @@ jar {
     from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
 
     exclude 'META-INF/*.SF', 'META-INF/*.DSA', 'META-INF/*.RSA', 'META-INF/*.MF'
+    exclude 'ing/boykiss/gearworks/AppGameProvider.class'
+    exclude 'ing/boykiss/gearworks/AppGameProvider$*.class'
+    exclude 'ing/boykiss/gearworks/AppGameTransformer.class'
+    exclude 'ing/boykiss/gearworks/AppGameTransformer$*.class'
+    exclude 'META-INF/services/net.fabricmc.loader.impl.game.GameProvider'
+}
+
+
+tasks.register('launcherJar', Jar) {
+    manifest {
+        attributes 'Main-Class': 'ing.boykiss.gearworks.launcher.LauncherMain'
+    }
+    archiveBaseName = 'GearworksLauncher'
+    destinationDirectory = layout.buildDirectory.dir("client")
+    dependsOn 'compileJava', 'processResources', ':launcher:classes'
+
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
+    from(sourceSets.main.output.classesDirs) {
+        include 'ing/boykiss/gearworks/AppGameProvider.class'
+        include 'ing/boykiss/gearworks/AppGameProvider$*.class'
+        include 'ing/boykiss/gearworks/AppGameTransformer.class'
+        include 'ing/boykiss/gearworks/AppGameTransformer$*.class'
+    }
+    from(sourceSets.main.output.resourcesDir) {
+        include 'META-INF/services/**'
+    }
+    from project(':launcher').sourceSets.main.output.classesDirs
+    from { project(':launcher').configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
+    from(configurations.loaderDeps.collect { it.isDirectory() ? it : zipTree(it) }) {
+        exclude 'META-INF/services/net.fabricmc.loader.impl.game.GameProvider'
+    }
+
+    exclude 'META-INF/*.SF', 'META-INF/*.DSA', 'META-INF/*.RSA', 'META-INF/*.MF'
 }
 
 tasks.register('serverJar', Jar) {
-    manifest {
-        attributes 'Main-Class': 'net.fabricmc.loader.impl.launch.knot.KnotServer'
-    }
     archiveBaseName = 'GearworksServer'
     destinationDirectory = layout.buildDirectory.dir("server")
 
@@ -134,18 +180,51 @@ tasks.register('serverJar', Jar) {
 
     exclude 'META-INF/*.SF', 'META-INF/*.DSA', 'META-INF/*.RSA', 'META-INF/*.MF'
     exclude 'ing/boykiss/gearworks/client/**'
+    exclude 'ing/boykiss/gearworks/AppGameProvider.class'
+    exclude 'ing/boykiss/gearworks/AppGameProvider$*.class'
+    exclude 'ing/boykiss/gearworks/AppGameTransformer.class'
+    exclude 'ing/boykiss/gearworks/AppGameTransformer$*.class'
+    exclude 'META-INF/services/net.fabricmc.loader.impl.game.GameProvider'
+}
+
+tasks.register('serverLauncherJar', Jar) {
+    manifest {
+        attributes 'Main-Class': 'ing.boykiss.gearworks.launcher.ServerLauncherMain'
+    }
+    archiveBaseName = 'GearworksServerLauncher'
+    destinationDirectory = layout.buildDirectory.dir("server")
+    dependsOn 'compileJava', 'processResources', ':launcher:classes'
+
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
+    from(sourceSets.main.output.classesDirs) {
+        include 'ing/boykiss/gearworks/AppGameProvider.class'
+        include 'ing/boykiss/gearworks/AppGameProvider$*.class'
+        include 'ing/boykiss/gearworks/AppGameTransformer.class'
+        include 'ing/boykiss/gearworks/AppGameTransformer$*.class'
+    }
+    from(sourceSets.main.output.resourcesDir) {
+        include 'META-INF/services/**'
+    }
+    from project(':launcher').sourceSets.main.output.classesDirs
+    from { project(':launcher').configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
+    from(configurations.loaderDeps.collect { it.isDirectory() ? it : zipTree(it) }) {
+        exclude 'META-INF/services/net.fabricmc.loader.impl.game.GameProvider'
+    }
+
+    exclude 'META-INF/*.SF', 'META-INF/*.DSA', 'META-INF/*.RSA', 'META-INF/*.MF'
 }
 
 tasks.register('buildAndCopyClient', Copy) {
     group 'build'
-    dependsOn 'jar'
+    dependsOn 'jar', 'launcherJar'
     from "build/client/"
-    into "../runClient/"
+    into "../run/client/vanilla/"
 }
 
 tasks.register('buildAndCopyServer', Copy) {
     group 'build'
-    dependsOn 'serverJar'
+    dependsOn 'serverJar', 'serverLauncherJar'
     from "build/server/"
-    into "../runServer/"
+    into "../run/server/vanilla/"
 }

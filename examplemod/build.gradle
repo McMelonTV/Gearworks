@@ -22,6 +22,10 @@ repositories {
 
 dependencies {
     implementation project(':game')
+
+    compileOnly "net.fabricmc:fabric-loader:0.18.4"
+    compileOnly "org.spongepowered:mixin:0.8.5"
+    compileOnly "org.ow2.asm:asm:9.9.1"
 }
 
 processResources {
@@ -46,12 +50,12 @@ tasks.register('buildAndCopyClient', Copy) {
     group 'build'
     dependsOn 'jar'
     from "build/libs/"
-    into "../runClient/mods"
+    into "../run/client/modded/mods"
 }
 
 tasks.register('buildAndCopyServer', Copy) {
     group 'build'
     dependsOn 'jar'
     from "build/libs/"
-    into "../runServer/mods"
+    into "../run/server/modded/mods"
 }

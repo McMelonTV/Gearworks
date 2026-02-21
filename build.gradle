@@ -1,0 +1,238 @@
+evaluationDependsOn(':game')
+evaluationDependsOn(':examplemod')
+
+def gameProject = project(':game')
+def examplemodProject = project(':examplemod')
+
+def devClasspath = {
+    gameProject.configurations.loaderDeps +
+            gameProject.sourceSets.main.output
+}
+
+def clientGameJar = gameProject.tasks.named('jar').map { it.archiveFile.get().asFile }
+def serverGameJar = gameProject.tasks.named('serverJar').map { it.archiveFile.get().asFile }
+def clientLaunchJar = gameProject.tasks.named('launcherJar').map { it.archiveFile.get().asFile }
+def serverLaunchJar = gameProject.tasks.named('serverLauncherJar').map { it.archiveFile.get().asFile }
+def examplemodJar = examplemodProject.tasks.named('jar').map { it.archiveFile.get().asFile }
+
+def runClientVanillaDir = rootProject.file('run/client/vanilla')
+def runClientModdedDir = rootProject.file('run/client/modded')
+def runClientModdedModsDir = rootProject.file('run/client/modded/mods')
+def runServerVanillaDir = rootProject.file('run/server/vanilla')
+def runServerModdedDir = rootProject.file('run/server/modded')
+def runServerModdedModsDir = rootProject.file('run/server/modded/mods')
+def runLauncherDir = rootProject.file('run/launcher')
+
+// Dev run tasks
+
+tasks.register('runClientVanillaDev', JavaExec) {
+    group 'run (dev)'
+    description 'Run the game client (no mods, dev classpath)'
+    dependsOn ':game:jar'
+
+    classpath = devClasspath()
+    mainClass = 'net.fabricmc.loader.impl.launch.knot.KnotClient'
+    workingDir runClientVanillaDir
+
+    jvmArgs '--enable-native-access=ALL-UNNAMED'
+    doFirst {
+        runClientVanillaDir.mkdirs()
+        systemProperty 'fabric.development', 'true'
+        systemProperty 'fabric.gameJarPath', clientGameJar.get().absolutePath
+    }
+    environment '__GL_THREADED_OPTIMIZATIONS', '0'
+}
+
+tasks.register('runClientModdedDev', JavaExec) {
+    group 'run (dev)'
+    description 'Run the game client with examplemod (fabric.addMods, dev classpath)'
+    dependsOn ':game:jar', ':examplemod:jar'
+
+    classpath = devClasspath()
+    mainClass = 'net.fabricmc.loader.impl.launch.knot.KnotClient'
+    workingDir runClientModdedDir
+
+    jvmArgs '--enable-native-access=ALL-UNNAMED'
+    doFirst {
+        runClientModdedDir.mkdirs()
+        systemProperty 'fabric.development', 'true'
+        systemProperty 'fabric.gameJarPath', clientGameJar.get().absolutePath
+        systemProperty 'fabric.addMods', examplemodJar.get().absolutePath
+    }
+    environment '__GL_THREADED_OPTIMIZATIONS', '0'
+}
+
+tasks.register('runServerVanillaDev', JavaExec) {
+    group 'run (dev)'
+    description 'Run the game server (no mods, dev classpath)'
+    dependsOn ':game:serverJar'
+
+    classpath = devClasspath()
+    mainClass = 'net.fabricmc.loader.impl.launch.knot.KnotServer'
+    workingDir runServerVanillaDir
+
+    jvmArgs '--enable-native-access=ALL-UNNAMED'
+    doFirst {
+        runServerVanillaDir.mkdirs()
+        systemProperty 'fabric.development', 'true'
+        systemProperty 'fabric.gameJarPath', serverGameJar.get().absolutePath
+    }
+}
+
+tasks.register('runServerModdedDev', JavaExec) {
+    group 'run (dev)'
+    description 'Run the game server with examplemod (fabric.addMods, dev classpath)'
+    dependsOn ':game:serverJar', ':examplemod:jar'
+
+    classpath = devClasspath()
+    mainClass = 'net.fabricmc.loader.impl.launch.knot.KnotServer'
+    workingDir runServerModdedDir
+
+    jvmArgs '--enable-native-access=ALL-UNNAMED'
+    doFirst {
+        runServerModdedDir.mkdirs()
+        systemProperty 'fabric.development', 'true'
+        systemProperty 'fabric.gameJarPath', serverGameJar.get().absolutePath
+        systemProperty 'fabric.addMods', examplemodJar.get().absolutePath
+    }
+}
+
+// Release run stage tasks
+
+tasks.register('stageClientVanilla') {
+    group 'stage'
+    description 'Copy client JARs into run/client/vanilla/ (no mods)'
+    dependsOn ':game:jar', ':game:launcherJar'
+    doFirst {
+        runClientVanillaDir.mkdirs()
+        project.copy { from clientGameJar.get(); into runClientVanillaDir }
+        project.copy { from clientLaunchJar.get(); into runClientVanillaDir }
+    }
+}
+
+tasks.register('stageClientModded') {
+    group 'stage'
+    description 'Copy client JARs + examplemod into run/client/modded/'
+    dependsOn ':game:jar', ':game:launcherJar', ':examplemod:jar'
+    doFirst {
+        runClientModdedModsDir.mkdirs()
+        project.copy { from clientGameJar.get(); into runClientModdedDir }
+        project.copy { from clientLaunchJar.get(); into runClientModdedDir }
+        project.copy { from examplemodJar.get(); into runClientModdedModsDir }
+    }
+}
+
+tasks.register('stageServerVanilla') {
+    group 'stage'
+    description 'Copy server JARs into run/server/vanilla/ (no mods)'
+    dependsOn ':game:serverJar', ':game:serverLauncherJar'
+    doFirst {
+        runServerVanillaDir.mkdirs()
+        project.copy { from serverGameJar.get(); into runServerVanillaDir }
+        project.copy { from serverLaunchJar.get(); into runServerVanillaDir }
+    }
+}
+
+tasks.register('stageServerModded') {
+    group 'stage'
+    description 'Copy server JARs + examplemod into run/server/modded/'
+    dependsOn ':game:serverJar', ':game:serverLauncherJar', ':examplemod:jar'
+    doFirst {
+        runServerModdedModsDir.mkdirs()
+        project.copy { from serverGameJar.get(); into runServerModdedDir }
+        project.copy { from serverLaunchJar.get(); into runServerModdedDir }
+        project.copy { from examplemodJar.get(); into runServerModdedModsDir }
+    }
+}
+
+// Release run tasks
+
+tasks.register('runClientVanillaRelease', Exec) {
+    group 'run (release)'
+    description 'Stage + run vanilla client (no mods, end-user experience)'
+    dependsOn 'stageClientVanilla'
+    workingDir runClientVanillaDir
+
+    doFirst {
+        def java = ProcessHandle.current().info().command().orElse('java')
+        commandLine java,
+                '--enable-native-access=ALL-UNNAMED',
+                '-jar', new File(runClientVanillaDir, clientLaunchJar.get().name).absolutePath,
+                '--knot-launch'
+    }
+    environment '__GL_THREADED_OPTIMIZATIONS', '0'
+}
+
+tasks.register('runClientModdedRelease', Exec) {
+    group 'run (release)'
+    description 'Stage + run modded client (examplemod in mods/, end-user experience)'
+    dependsOn 'stageClientModded'
+    workingDir runClientModdedDir
+
+    doFirst {
+        def java = ProcessHandle.current().info().command().orElse('java')
+        commandLine java,
+                '--enable-native-access=ALL-UNNAMED',
+                '-jar', new File(runClientModdedDir, clientLaunchJar.get().name).absolutePath,
+                '--knot-launch'
+    }
+    environment '__GL_THREADED_OPTIMIZATIONS', '0'
+}
+
+tasks.register('runServerVanillaRelease', Exec) {
+    group 'run (release)'
+    description 'Stage + run vanilla server (no mods, end-user experience)'
+    dependsOn 'stageServerVanilla'
+    workingDir runServerVanillaDir
+
+    doFirst {
+        def java = ProcessHandle.current().info().command().orElse('java')
+        commandLine java,
+                '--enable-native-access=ALL-UNNAMED',
+                '-jar', new File(runServerVanillaDir, serverLaunchJar.get().name).absolutePath,
+                '--knot-launch'
+    }
+}
+
+tasks.register('runServerModdedRelease', Exec) {
+    group 'run (release)'
+    description 'Stage + run modded server (examplemod in mods/, end-user experience)'
+    dependsOn 'stageServerModded'
+    workingDir runServerModdedDir
+
+    doFirst {
+        def java = ProcessHandle.current().info().command().orElse('java')
+        commandLine java,
+                '--enable-native-access=ALL-UNNAMED',
+                '-jar', new File(runServerModdedDir, serverLaunchJar.get().name).absolutePath,
+                '--knot-launch'
+    }
+}
+
+// Launcher run task
+
+tasks.register('stageClientLauncher') {
+    group 'stage'
+    description 'Copy launcher JAR + game JAR into run/launcher/ (isolated instance, no mods)'
+    dependsOn ':game:launcherJar', ':game:jar'
+    doFirst {
+        runLauncherDir.mkdirs()
+        project.copy { from clientLaunchJar.get(); into runLauncherDir }
+        project.copy { from clientGameJar.get(); into runLauncherDir }
+    }
+}
+
+tasks.register('runLauncher', Exec) {
+    group 'run (release)'
+    description 'Build and launch the client launcher UI'
+    dependsOn 'stageClientLauncher'
+    workingDir runLauncherDir
+
+    doFirst {
+        def java = ProcessHandle.current().info().command().orElse('java')
+        commandLine java,
+                '--enable-native-access=ALL-UNNAMED',
+                '-jar', new File(runLauncherDir, clientLaunchJar.get().name).absolutePath
+    }
+    environment '__GL_THREADED_OPTIMIZATIONS', '0'
+}
