@@ -2,10 +2,16 @@ package ing.boykiss.gearworks.client.render.game;
 
 import ing.boykiss.gearworks.client.render.Window;
 import ing.boykiss.gearworks.client.render.font.Font;
+import ing.boykiss.gearworks.common.util.ModList;
 import lombok.Getter;
+import net.fabricmc.loader.api.FabricLoader;
+import net.fabricmc.loader.api.ModContainer;
+import net.fabricmc.loader.api.metadata.ModMetadata;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL46;
 import org.lwjgl.system.MemoryUtil;
+
+import java.util.List;
 
 public class GameRenderer {
     private final Thread renderThread;
@@ -56,7 +62,7 @@ public class GameRenderer {
 
         GL46.glEnable(GL46.GL_TEXTURE_2D);
 
-        GL46.glClearColor(1.0f, 0.0f, 0.0f, 0.0f);
+        GL46.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
         long lastFrameNanos = System.nanoTime();
         long frameTargetNanos = 1_000_000_000 / (targetFPS > 0 ? targetFPS : Integer.MAX_VALUE);
@@ -102,5 +108,32 @@ public class GameRenderer {
         int fps = (int) (1_000_000_000 / deltaNanos);
 
         font.drawText("FPS: " + fps, 50, 50);
+
+        FabricLoader loader = FabricLoader.getInstance();
+        font.drawText("Running " + loader.getEnvironmentType().name() + " v" + loader.getRawGameVersion() + " " + (loader.isDevelopmentEnvironment() ? "(Dev)" : "(Release)"), 50, 100);
+
+        ModList modList = new ModList();
+
+        font.drawText(modList.getAllMods().size() + " loaded mods.", 50, 130);
+
+        record Category(String label, List<ModContainer> list) {
+        }
+        List<Category> categories = List.of(
+                new Category("Mods", modList.getMods()),
+                new Category("Libraries", modList.getLibraries()),
+                new Category("Core", modList.getBuiltins())
+        );
+
+        int y = 160;
+        for (Category category : categories) {
+            if (category.list().isEmpty()) continue;
+            font.drawText(category.label() + " (" + category.list().size() + ")" + ":", 50, y);
+            for (ModContainer mod : category.list()) {
+                ModMetadata meta = mod.getMetadata();
+                y += 20;
+                font.drawText(meta.getName() + " v" + meta.getVersion() + " (" + meta.getId() + ")", 60, y);
+            }
+            y += 30;
+        }
     }
 }
