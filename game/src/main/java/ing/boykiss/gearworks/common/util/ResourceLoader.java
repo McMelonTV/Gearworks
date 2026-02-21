@@ -6,7 +6,7 @@ import java.nio.ByteBuffer;
 
 public class ResourceLoader {
     public static ByteBuffer readFileBytes(String filePath) {
-        InputStream stream = ClassLoader.getSystemResourceAsStream(filePath);
+        InputStream stream = ResourceLoader.class.getResourceAsStream("/" + filePath);
 
         if (stream == null) {
             System.err.println("File not found in resources: " + filePath);
@@ -28,7 +28,7 @@ public class ResourceLoader {
     }
 
     public static String readFileString(String filePath) {
-        InputStream stream = ClassLoader.getSystemResourceAsStream(filePath);
+        InputStream stream = ResourceLoader.class.getResourceAsStream("/" + filePath);
 
         if (stream == null) {
             System.err.println("File not found in resources: " + filePath);
